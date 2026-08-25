@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxOps – Geschäftsmodell Übersicht</title>
+<style>
+  :root {
+    --green-dark: #3f5b45;
+    --green: #6b8f71;
+    --green-light: #a8c3a4;
+    --beige: #f3efe6;
+    --beige-dark: #e6ded0;
+    --gray: #6b6b64;
+    --gray-light: #d9d5c9;
+    --text: #2e2e2b;
+    --white: #fffdf9;
+    --radius: 10px;
+    --shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    background: var(--beige);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 260px;
+    background: var(--green-dark);
+    color: var(--beige);
+    flex-shrink: 0;
+    padding: 24px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+
+  #sidebar .logo {
+    font-size: 22px;
+    font-weight: 700;
+    padding: 0 24px 20px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 10px;
+  }
+  #sidebar .logo span { color: var(--green-light); }
+  #sidebar .subtitle {
+    font-size: 12px;
+    opacity: 0.7;
+    padding: 0 24px 16px 24px;
+    display: block;
+  }
+
+  #sidebar nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--beige);
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 14.5px;
+    border-left: 3px solid transparent;
+    opacity: 0.85;
+    transition: background 0.15s, opacity 0.15s;
+  }
+  #sidebar nav a:hover { background: rgba(255,255,255,0.06); opacity: 1; }
+  #sidebar nav a.active {
+    background: rgba(255,255,255,0.1);
+    border-left-color: var(--green-light);
+    opacity: 1;
+    font-weight: 600;
+  }
+  #sidebar .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  #menuToggle {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 200;
+    background: var(--green-dark);
+    color: var(--beige);
+    border: none;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  /* Main content */
+  #main {
+    margin-left: 260px;
+    padding: 40px 48px 80px 48px;
+    width: 100%;
+    max-width: 980px;
+  }
+
+  .page { display: none; animation: fadeIn 0.25s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform: translateY(0);} }
+
+  h1 {
+    font-size: 30px;
+    color: var(--green-dark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  h2 {
+    font-size: 21px;
+    color: var(--green-dark);
+    margin-top: 38px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--beige-dark);
+  }
+  h3 {
+    font-size: 16.5px;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  p { line-height: 1.65; color: var(--text); }
+  .lead {
+    font-size: 16px;
+    color: var(--gray);
+    margin-bottom: 28px;
+    max-width: 680px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .badge.gray { background: var(--gray-light); color: var(--gray); }
+  .badge.warn { background: #e8c8a0; color: #7a4a1f; }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--beige-dark);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { margin-top: 0; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  @media (max-width: 720px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  ul { padding-left: 20px; line-height: 1.7; }
+  li { margin-bottom: 4px; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .tag {
+    background: var(--beige-dark);
+    color: var(--green-dark);
+    font-size: 12.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .quote {
+    background: var(--green-dark);
+    color: var(--white);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    font-size: 17px;
+    font-style: italic;
+    margin: 20px 0;
+    border-left: 5px solid var(--green-light);
+  }
+
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 24px 0;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  .flow-step {
+    background: var(--white);
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    min-width: 190px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .flow-step .phase-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .flow-step ul { padding-left: 16px; font-size: 13.5px; margin: 8px 0 0 0; }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--green);
+    font-size: 22px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  /* Monthly plan timeline */
+  .month-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .week-block {
+    display: flex;
+    gap: 18px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .week-block:last-child { padding-bottom: 0; }
+  .week-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 70px;
+  }
+  .week-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    z-index: 2;
+  }
+  .week-line {
+    flex-grow: 1;
+    width: 2px;
+    background: var(--green-light);
+    margin-top: 4px;
+  }
+  .week-block:last-child .week-line { display: none; }
+  .week-content {
+    background: var(--white);
+    border: 1px solid var(--beige-dark);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    flex-grow: 1;
+    box-shadow: var(--shadow);
+  }
+  .week-content h4 { margin: 0 0 8px 0; color: var(--green-dark); font-size: 15px; }
+  .week-content ul { margin: 0; font-size: 14px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--beige-dark);
+    font-size: 14px;
+  }
+  th { background: var(--beige-dark); color: var(--green-dark); font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+
+  .risk-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--beige-dark);
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-num {
+    background: #d98c5f;
+    color: white;
+    font-weight: 700;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .gap-item {
+    border-left: 4px solid var(--green);
+    background: var(--white);
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    box-shadow: var(--shadow);
+  }
+  .gap-item h4 { margin: 0 0 6px 0; color: var(--green-dark); font-size: 15px; }
+  .gap-item p { margin: 0; font-size: 14px; color: var(--gray); }
+
+  .footer-note {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid var(--beige-dark);
+    font-size: 12.5px;
+    color: var(--gray);
+  }
+
+  .icp-card { border-top: 4px solid var(--green); }
+  .arch-layer {
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    color: white;
+  }
+  .arch-layer.a { background: var(--green-dark); }
+  .arch-layer.b { background: var(--green); }
+  .arch-layer.c { background: var(--gray); }
+  .arch-layer h4 { margin: 0 0 6px 0; }
+  .arch-layer p { color: rgba(255,255,255,0.9); margin: 0; font-size: 13.5px; }
+
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; padding: 70px 20px 60px 20px; }
+    #menuToggle { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<button id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<aside id="sidebar">
+  <div class="logo">Max<span>Ops</span></div>
+  <span class="subtitle">Geschäftsmodell · Arbeitsstand</span>
+  <nav>
+    <a href="#" data-page="home" class="active"><span class="icon">🏠</span> Übersicht</a>
+    <a href="#" data-page="modell"><span class="icon">🧩</span> Geschäftsmodell</a>
+    <a href="#" data-page="kunden"><span class="icon">🎯</span> Zielkunden</a>
+    <a href="#" data-page="angebot"><span class="icon">💶</span> Angebot & Preise</a>
+    <a href="#" data-page="mvp"><span class="icon">⚙️</span> MVP & PoC</a>
+    <a href="#" data-page="gtm"><span class="icon">📣</span> Go-to-Market</a>
+    <a href="#" data-page="risiken"><span class="icon">⚠️</span> Risiken</a>
+    <a href="#" data-page="roadmap"><span class="icon">🗺️</span> Roadmap 0–24 Monate</a>
+    <a href="#" data-page="naechste"><span class="icon">📅</span> Nächste Schritte</a>
+    <a href="#" data-page="ideen"><span class="icon">💡</span> Ergänzungen & Ideen</a>
+  </nav>
+</aside>
+
+<main id="main">
+
+  <!-- HOME -->
+  <section class="page active" id="page-home">
+    <span class="badge">Arbeitsstand · privates Planungsdokument</span>
+    <h1>MaxOps</h1>
+    <p class="lead">Eine integrierte Steuerungsplattform für projektorientierte Unternehmen – sie verbindet Projektstatus, Zeiterfassung, Kapazitäten, Ressourcenkonflikte und operative Kennzahlen über bestehende Systeme hinweg. Kein neues ERP, kein Tool-Ersatz, sondern eine Orchestrierungs- und Steuerungsschicht.</p>
+
+    <div class="quote">
+      "Keine neue Inselsoftware, sondern eine integrierte Steuerungsschicht für Kapazität, Zeit und Projekte."
+    </div>
+
+    <h2>Das Kernproblem, das gelöst wird</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Was Kunden heute spüren</h3>
+        <ul>
+          <li>Projekttermine kippen überraschend</li>
+          <li>Teams sind überlastet, Prioritäten wechseln chaotisch</li>
+          <li>Abteilungen planen gegeneinander</li>
+          <li>Zeiterfassungsdaten bringen kaum Nutzen</li>
+          <li>Excel ist die heimliche Schattensteuerung</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Was MaxOps liefert</h3>
+        <ul>
+          <li>Engpässe früher erkennen</li>
+          <li>Auslastung besser steuern</li>
+          <li>Projektaufwände realistischer verstehen</li>
+          <li>Weniger Abstimmungschaos</li>
+          <li>Bereichsübergreifende Sicht ohne Systemersatz</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Die 3 Bausteine im Überblick</h2>
+    <div class="grid-3">
+      <div class="card">
+        <span class="badge">Türöffner</span>
+        <h3>Resource Conflict Radar</h3>
+        <p>Frühzeitige Sicht auf Überlastung, Doppelverplanung, Rollenkonflikte, Teamengpässe.</p>
+      </div>
+      <div class="card">
+        <span class="badge gray">Differenzierung</span>
+        <h3>Time Intelligence</h3>
+        <p>Vorhandene Zeitdaten intelligent nutzbar machen – Plan/Ist, Aufwandsmuster, Datenqualität.</p>
+      </div>
+      <div class="card">
+        <span class="badge warn">Langfristvision</span>
+        <h3>Project & Capacity Control Layer</h3>
+        <p>Alles zusammenführen: Projekte, Rollen, Ressourcen, Konflikte, Forecasts – eine operative Wahrheit.</p>
+      </div>
+    </div>
+
+    <h2>Positionierung – 3 Varianten</h2>
+    <div class="card">
+      <p><strong>Praktisch:</strong> "Weniger Blindflug in Projekten: Wir machen Ressourcenkonflikte, Auslastung und Plan-Ist-Abweichungen über Teams und Systeme hinweg sichtbar."</p>
+      <p><strong>Managementorientiert:</strong> "Wir bauen für projektorientierte Unternehmen eine Steuerungsschicht über bestehende Systeme, damit Führungskräfte Kapazitäten, Aufwände und Projektengpässe belastbar steuern können."</p>
+      <p><strong>Produktnah:</strong> "Eine integrierte Steuerungsplattform für Ressourcen, Zeitdaten und Projekte — aufbauend auf vorhandenen Systemen statt als teure Totalablösung."</p>
+    </div>
+  </section>
+
+  <!-- GESCHÄFTSMODELL -->
+  <section class="page" id="page-modell">
+    <span class="badge">Baustein 1</span>
+    <h1>Geschäftsmodell im Detail</h1>
+    <p class="lead">Nicht drei getrennte Produkte, sondern eine Produktfamilie mit klarer Ausbaulogik.</p>
+
+    <h2>Die 3 Lösungsbausteine</h2>
+    <div class="card">
+      <h3>1. Resource Conflict Radar — Einstiegsprodukt</h3>
+      <p><strong>Aufgabe:</strong> Überlastung, Doppelverplanung, Rollenkonflikte, Teamengpässe, kritische Zeiträume erkennen.</p>
+      <p><strong>Kundennutzen:</strong> weniger Überraschungen, bessere Priorisierung, frühere Eskalation, realistischere Projektplanung.</p>
+    </div>
+    <div class="card">
+      <h3>2. Time Intelligence — Differenzierungsmodul</h3>
+      <p><strong>Aufgabe:</strong> Plan/Ist-Vergleiche, Aufwandsmuster, indirekte Tätigkeiten, Nachkalkulation, Datenqualitätsprobleme.</p>
+      <p><strong>Kundennutzen:</strong> bessere Planung, bessere Aufwandsabschätzung, realistischere Ressourcenentscheidungen.</p>
+    </div>
+    <div class="card">
+      <h3>3. Project & Capacity Control Layer — langfristige Produktvision</h3>
+      <p><strong>Aufgabe:</strong> Projekte, Rollen, Ressourcen, Zeiterfassung, Konflikte, Maßnahmen, Forecasts zusammenführen.</p>
+      <p><strong>Kundennutzen:</strong> eine gemeinsame operative Wahrheit, weniger Silodenken, Management- und Teamleiter-Sicht in einem Modell.</p>
+    </div>
+
+    <h2>Produktarchitektur – 3 Ebenen</h2>
+    <div class="arch-layer a">
+      <h4>Ebene A · Core Framework (stabil)</h4>
+      <p>Standard-Datenmodell, Rollen-/Ressourcen-/Verfügbarkeitslogik, Konflikterkennung, Zeitdatenmodell, KPI-Logik, Standardvisualisierungen, Maßnahmenlogik.</p>
+    </div>
+    <div class="arch-layer b">
+      <h4>Ebene B · Connectors / Integrationen (variabel)</h4>
+      <p>SAP, Zeiterfassungssystem, Excel, Jira, CRM, SharePoint, Planner/Project/Ticketsystem.</p>
+    </div>
+    <div class="arch-layer c">
+      <h4>Ebene C · Frontend / Experience</h4>
+      <p>Power-BI-Dashboards, Teams-Benachrichtigungen, Jira-Maßnahmen, Confluence-Doku, optional eigenes Web-Frontend.</p>
+    </div>
+
+    <h2>Datenmodell – Kernobjekte</h2>
+    <table>
+      <tr><th>Objekt</th><th>Wichtige Felder</th></tr>
+      <tr><td>Projekt</td><td>ID, Name, Kunde, Status, Phase, Start/Ende, Priorität, Projektleiter, Disziplinen</td></tr>
+      <tr><td>Ressource</td><td>Mitarbeiter-ID, Rolle, Team, Disziplin, Standort, Skill/Engpassrolle</td></tr>
+      <tr><td>Verfügbarkeit</td><td>Kalender, Kapazität, verfügbare Stunden/Tage, Abwesenheit, Auslastungsgrad</td></tr>
+      <tr><td>Ist-Zeit</td><td>Datum, Mitarbeiter, Projekt, Tätigkeit, Stunden, Kategorie</td></tr>
+      <tr><td>Plan-Zeit / Forecast</td><td>geplanter Aufwand, Zeitraum, Projekt, Rolle/Person, Quelle</td></tr>
+      <tr><td>Konflikt</td><td>Ressource, Zeitraum, Konflikttyp, betroffene Projekte, Schweregrad</td></tr>
+      <tr><td>KPI</td><td>Name, Definition, Wert, Zeitraum, Bereich/Rolle/Projektbezug</td></tr>
+    </table>
+  </section>
+
+  <!-- ZIELKUNDEN -->
+  <section class="page" id="page-kunden">
+    <span class="badge">Wer soll zuerst kaufen?</span>
+    <h1>Zielkunden</h1>
+    <p class="lead">Nicht jeden Mittelständler ansprechen – sondern sehr konkrete Ideal Customer Profiles.</p>
+
+    <div class="card icp-card">
+      <h3>ICP 1 · Projektorientierter Mittelstand</h3>
+      <p><strong>Merkmale:</strong> 100–1500 Mitarbeitende, mehrere technische Teams/Disziplinen, hohe Excel-Abhängigkeit, ERP + Zeiterfassung vorhanden, Projektplanung dezentral, Ressourcenprobleme & Priorisierungskonflikte.</p>
+      <div class="tag-row">
+        <span class="tag">Maschinenbau</span><span class="tag">Anlagenbau</span><span class="tag">Engineering</span>
+        <span class="tag">Automatisierungstechnik</span><span class="tag">Sondermaschinenbau</span><span class="tag">Service/Instandhaltung</span>
+      </div>
+      <p><strong>Warum ideal:</strong> genug Komplexität, aber oft noch keine gute integrierte Steuerung.</p>
+    </div>
+
+    <div class="card icp-card">
+      <h3>ICP 2 · Interne Projekt-/Engineering-/IT-Bereiche in Großunternehmen</h3>
+      <p><strong>Merkmale:</strong> mehrere Teams, viele Anforderungen, hoher Koordinationsaufwand, Jira/Microsoft/ERP/Zeiterfassung parallel, Management will Transparenz.</p>
+      <p><strong>Warum spannend:</strong> Andocken in einzelnen Bereichen möglich, ohne konzernweit denken zu müssen.</p>
+    </div>
+
+    <div class="card icp-card">
+      <h3>ICP 3 · Unternehmen mit schlechter Ressourcenplanung trotz vorhandener Tools</h3>
+      <p><strong>Merkmale:</strong> Tools und Daten vorhanden, aber keine verlässliche bereichsübergreifende Sicht, Konflikte werden manuell gelöst.</p>
+      <p><strong>Warum spannend:</strong> Verkauf von Datennutzung statt "Digitalisierung".</p>
+    </div>
+  </section>
+
+  <!-- ANGEBOT -->
+  <section class="page" id="page-angebot">
+    <span class="badge">Dreistufig</span>
+    <h1>Angebotsstruktur & Preise</h1>
+    <p class="lead">Kunden kaufen Schmerzreduktion, keine Kapazitätsmodellierung. Preise als Hybrid – nicht sofort reines SaaS.</p>
+
+    <h2>3 Angebotsstufen</h2>
+    <div class="card">
+      <h3>1 · Diagnostic / Analysepaket</h3>
+      <p><strong>Ziel:</strong> Schmerz sichtbar machen, Kaufgrund schaffen.</p>
+      <p><strong>Ergebnis:</strong> Management Summary, Problemkarte, Quick-Win-Potenziale, MVP-Vorschlag, Roadmap.</p>
+      <p><strong>Preis:</strong> ca. 2.000–7.500 € (je nach Kundengröße)</p>
+    </div>
+    <div class="card">
+      <h3>2 · Radar / Intelligence Pilot</h3>
+      <p><strong>Ziel:</strong> In 4–8 Wochen erster echter Nutzwert (Resource Conflict Radar oder Time Intelligence Pilot).</p>
+      <p><strong>Preis:</strong> ca. 5.000–20.000 € (je nach Datenlage/Umfang) — <em>bester Einstieg</em></p>
+    </div>
+    <div class="card">
+      <h3>3 · Project & Capacity Control Rollout</h3>
+      <p><strong>Ziel:</strong> Aus Pilotlösung eine dauerhafte Steuerungsplattform machen — mehrere Datenquellen, Teams, Governance, optional KI-Assistent.</p>
+      <p><strong>Preis:</strong> Einführung + monatliche Pauschale 500–3.000 €/Monat</p>
+    </div>
+
+    <h2>Empfohlenes Startangebot</h2>
+    <div class="card" style="border-left:5px solid var(--green);">
+      <h3>"Resource & Time Visibility Sprint" · 4–6 Wochen</h3>
+      <p><strong>Inhalt:</strong> Analyse der Planungssituation, Sicht auf Rollen/Teams/Projekte, Konflikterkennung, erste Kapazitätsübersicht, Plan/Ist-Perspektive, Management-Review, Handlungsempfehlungen.</p>
+      <p><strong>Ergebnis:</strong> 1 Management-Dashboard, 1 Teamleiter-Dashboard, 1 Konfliktheatmap, 1 Datenqualitätsübersicht, 1 Roadmap für Ausbau.</p>
+      <p><strong>Warum gut:</strong> klein genug für ersten Kauf, groß genug für echten Nutzen, gute Basis für Folgeprojekt.</p>
+    </div>
+
+    <h2>Preislogik über Zeit</h2>
+    <table>
+      <tr><th>Phase</th><th>Modell</th></tr>
+      <tr><td>Phase 1</td><td>Analyse + Pilotpreise (2.000–20.000 €, projektbasiert)</td></tr>
+      <tr><td>Phase 2</td><td>Rollout + Service, monatliche Pauschale für Support/Pflege (500–3.000 €/Monat)</td></tr>
+      <tr><td>Phase 3</td><td>Produktisierung: Basislizenz, Modulpreise, Bereichslizenz, Managed Service (erst wenn Muster bekannt)</td></tr>
+    </table>
+  </section>
+
+  <!-- MVP -->
+  <section class="page" id="page-mvp">
+    <span class="badge">Klein anfangen</span>
+    <h1>MVP & Proof of Concept</h1>
+
+    <h2>MVP-Definition</h2>
+    <div class="card">
+      <h3>MVP = Resource Conflict Radar + einfache Time Intelligence</h3>
+      <p>Nur Konflikterkennung ist oft zu dünn, nur Zeitanalyse wirkt zu "Controlling-lastig". Die Kombination liefert aktuellen Schmerz + betriebliche Relevanz + bessere Story.</p>
+      <div class="grid-2">
+        <div>
+          <h4>Inputs</h4>
+          <ul>
+            <li>Mitarbeiter/Rollen/Teams</li>
+            <li>Verfügbarkeiten</li>
+            <li>Zeitdaten/Aufwandshistorie</li>
+            <li>Projektzuordnungen</li>
+            <li>Planwerte, optional Jira/Tickets</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Outputs</h4>
+          <ul>
+            <li>Überlastungsübersicht</li>
+            <li>Konfliktheatmap</li>
+            <li>Rollenengpässe</li>
+            <li>Plan/Ist-Aufwände</li>
+            <li>Maßnahmenliste / Eskalationssicht</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Bewusst NICHT im MVP:</strong> komplexe KI, volle Portfolioplanung, Ersatz bestehender Projekttools, hochkomplexe Simulation, HR-/ERP-Neuarchitektur.</p>
+    </div>
+
+    <h2>PoC – 4 Kernmodule</h2>
+    <div class="grid-2">
+      <div class="card"><h3>1. Projektübersicht</h3><p>Projektname, Kunde, Status, Phase, Plan- vs. Ist-Aufwand, kritische Ressourcen, Ampelstatus.</p></div>
+      <div class="card"><h3>2. Resource Conflict Radar</h3><p>Auslastung nach Rolle/Team/Person, Überlastungen, Doppelbelegungen, Heatmap kritischer Wochen.</p></div>
+      <div class="card"><h3>3. Time Intelligence</h3><p>Gebuchte Stunden, Plan-Ist-Vergleich, historische Muster, Datenlücken.</p></div>
+      <div class="card"><h3>4. Rollen- & Disziplinansicht</h3><p>Unterschiedliche Logiken je Rolle: Projektleiter, Entwicklung, Montage, Einkauf, Service.</p></div>
+    </div>
+
+    <h2>Sinnvolle Datenquellen für den PoC (max. 4)</h2>
+    <div class="tag-row">
+      <span class="tag">Zeiterfassungssystem</span>
+      <span class="tag">Projekt-/ERP-Daten</span>
+      <span class="tag">Excel / CSV / SharePoint</span>
+      <span class="tag">Jira (optional)</span>
+    </div>
+
+    <h2>MaxOps v1 – Kernmodule (marktfähige erste Version)</h2>
+    <table>
+      <tr><th>Modul</th><th>Für wen</th></tr>
+      <tr><td>Executive Overview</td><td>Geschäftsführung / Bereichsleitung</td></tr>
+      <tr><td>Project Control</td><td>Projektleiter</td></tr>
+      <tr><td>Resource Control</td><td>Teamleiter / Bereichsleiter</td></tr>
+      <tr><td>Time Intelligence</td><td>Projektsteuerung / Controlling</td></tr>
+      <tr><td>Role-Based Views</td><td>Projektleiter, Entwicklung, Montage, Einkauf, Inbetriebnahme, Service</td></tr>
+      <tr><td>Basic Action Layer</td><td>Eskalation, Maßnahmenstatus, Export an Jira/Ticketsysteme</td></tr>
+    </table>
+
+    <h2>Upgrade-Pfad</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <span class="phase-label">v1</span>
+        <ul><li>Executive Overview</li><li>Project/Resource Control</li><li>Role-Based Views</li></ul>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <span class="phase-label">v2</span>
+        <ul><li>Direkte Planerfassung</li><li>Ressourcenzuteilung im Tool</li><li>Szenariovergleiche</li></ul>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <span class="phase-label">v3</span>
+        <ul><li>KI-Copilot</li><li>Engpassprognosen</li><li>Anomalieerkennung</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- GTM -->
+  <section class="page" id="page-gtm">
+    <span class="badge">Markteintritt</span>
+    <h1>Go-to-Market & Wettbewerbsstrategie</h1>
+
+    <h2>Der größte Fehler wäre...</h2>
+    <div class="quote">Zu früh mit einer abstrakten Plattformidee auf den Markt zu gehen. Besser: zuerst ein akutes Problem verkaufen.</div>
+
+    <h2>Beste Einstiegsbotschaften</h2>
+    <div class="grid-3">
+      <div class="card"><p>"Wir machen Ressourcenkonflikte sichtbar, bevor sie Termine reißen."</p></div>
+      <div class="card"><p>"Wir nutzen vorhandene Zeit- und Projektdaten, um Kapazitätsengpässe früh zu erkennen."</p></div>
+      <div class="card"><p>"Wir schaffen eine bereichsübergreifende Sicht auf Auslastung, Aufwand und Projektkonflikte — ohne bestehende Tools abzulösen."</p></div>
+    </div>
+
+    <h2>Erste Kundengewinnung</h2>
+    <div class="card">
+      <h3>1. Netzwerk / bekanntes Umfeld</h3>
+      <p>Kontakte aus Industrie, ehemalige Kollegen, Partnerfirmen, regionale Mittelständler, Zulieferer/Dienstleister.</p>
+    </div>
+    <div class="card">
+      <h3>2. Problemorientierter Auftritt</h3>
+      <p>Nicht "Power BI, Automate, Jira, Confluence" — sondern "Ressourcenkonflikte", "Kapazitätsblindflug", "Zeitdaten nutzbar machen".</p>
+    </div>
+    <div class="card">
+      <h3>3. Demo-/Beispielcases</h3>
+      <p>Mockup-Dashboard, Beispiel-Heatmap, Beispiel-Use-Case, Vorher/Nachher-Story.</p>
+    </div>
+
+    <h2>Wettbewerbsdifferenzierung</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>❌ Nicht deine Story</h3>
+        <ul><li>Wir bauen Dashboards</li><li>Wir automatisieren Prozesse</li><li>Wir kennen Microsoft/Jira</li><li>Wir machen KI-Projekte</li></ul>
+      </div>
+      <div class="card">
+        <h3>✅ Deine Story</h3>
+        <ul><li>Wir schaffen Steuerungsfähigkeit</li><li>Wir verbinden bestehende Systeme</li><li>Wir machen Engpässe früher sichtbar</li><li>Wir machen Zeitdaten entscheidungsrelevant</li></ul>
+      </div>
+    </div>
+
+    <h2>Fähigkeiten & Partner</h2>
+    <table>
+      <tr><th>Zeithorizont</th><th>Bedarf</th></tr>
+      <tr><td>Kurzfristig selbst machbar</td><td>BI/Datenmodell, Prozesslogik, KPI-Definition, Microsoft-/Atlassian-Integration, Prototypen</td></tr>
+      <tr><td>Mittelfristig hilfreich</td><td>API-/Backend-Know-how, Datenarchitektur, UI/UX, vertriebliche Schärfung, rechtliche Themen</td></tr>
+      <tr><td>Später evtl. Partner</td><td>Entwickler Web-Produkt, Integrationsspezialist, UI-Designer, Sales/BD, Datenschutz-Begleitung</td></tr>
+    </table>
+  </section>
+
+  <!-- RISIKEN -->
+  <section class="page" id="page-risiken">
+    <span class="badge warn">Ehrlich betrachtet</span>
+    <h1>Realistische Risiken</h1>
+    <p class="lead">Nicht nur positiv malen — diese 5 Risiken sollten aktiv gemanagt werden.</p>
+
+    <div class="card">
+      <div class="risk-item">
+        <div class="risk-num">1</div>
+        <div><h4>Zu breit starten</h4><p>Wenn alles gleichzeitig gewollt wird, geht der Fokus verloren.</p></div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-num">2</div>
+        <div><h4>Zu technisch auftreten</h4><p>Dann kaufen Kunden wieder nur "ein Dashboard".</p></div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-num">3</div>
+        <div><h4>Datenzugang schwieriger als gedacht</h4><p>Gerade bei SAP/Zeiterfassung/CRM kann Integration aufwendig werden.</p></div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-num">4</div>
+        <div><h4>Unternehmen wollen Ergebnis, nicht Datenmodell</h4><p>Immer den Businessnutzen sprechen, nicht die Technik.</p></div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-num">5</div>
+        <div><h4>Produktisierung kommt zu früh</h4><p>Zu früh "SaaS" denken, ohne genug ähnliche Fälle gesehen zu haben → am Markt vorbei bauen.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="page" id="page-roadmap">
+    <span class="badge">Großer Bogen</span>
+    <h1>Roadmap · 0–24 Monate</h1>
+    <p class="lead">Der strategische Überblick über alle vier Phasen.</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <span class="phase-label">Phase 1 · 0–3 Monate</span>
+        <ul>
+          <li>Positionierung schärfen</li>
+          <li>Problemstory definieren</li>
+          <li>MVP-Konzept skizzieren</li>
+          <li>Demo/Mockup bauen</li>
+          <li>5–10 Kundengespräche</li>
+        </ul>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <span class="phase-label">Phase 2 · 3–6 Monate</span>
+        <ul>
+          <li>Erstes Analysepaket verkaufen</li>
+          <li>Ersten Pilotkunden gewinnen</li>
+          <li>Resource Conflict Radar umsetzen</li>
+          <li>Learnings dokumentieren</li>
+        </ul>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <span class="phase-label">Phase 3 · 6–12 Monate</span>
+        <ul>
+          <li>2./3. Pilot</li>
+          <li>Time Intelligence ergänzen</li>
+          <li>Wiederverwendbare Templates</li>
+          <li>Referenzstory erzeugen</li>
+        </ul>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <span class="phase-label">Phase 4 · 12–24 Monate</span>
+        <ul>
+          <li>Capacity Control Layer entwickeln</li>
+          <li>Stärkere Standardisierung</li>
+          <li>Managed Service/Subscription testen</li>
+          <li>Nebenerwerb → Vollerwerb (wenn Traktion passt)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Kernbotschaft</h2>
+    <div class="quote">Nicht "Tool bauen" — sondern zuerst "Steuerungslücke schließen". Und daraus später ein Produkt machen.</div>
+  </section>
+
+  <!-- NÄCHSTE SCHRITTE -->
+  <section class="page" id="page-naechste">
+    <span class="badge">Fokus: Dein Monatsplan</span>
+    <h1>Nächste Schritte</h1>
+    <p class="lead">Konkreter Wochenplan für die ersten 12 Wochen – das, was du diesen und nächsten Monat wirklich tun kannst.</p>
+
+    <h2>Wochenplan Monat 1–3</h2>
+    <div class="month-plan">
+
+      <div class="week-block">
+        <div class="week-marker"><div class="week-dot">1–2</div><div class="week-line"></div></div>
+        <div class="week-content">
+          <h4>Woche 1–2 · Fundament legen</h4>
+          <ul>
+            <li>Namen festlegen (aktuell: MaxOps, Domain/Markenrecht kurz prüfen)</li>
+            <li>Produktstory schärfen (1 Satz Positionierung)</li>
+            <li>PoC-Konzept schriftlich fixieren</li>
+            <li>1 Landingpage / 1 Pitch-Deck bauen</li>
+            <li>1 Mockup/Demo erstellen (z. B. Dashboard-Screenshot)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="week-marker"><div class="week-dot">3–4</div><div class="week-line"></div></div>
+        <div class="week-content">
+          <h4>Woche 3–4 · Erste Marktfühlung</h4>
+          <ul>
+            <li>Liste von 10–20 potenziellen Ansprechpartnern erstellen (Netzwerk, ehemalige Kollegen)</li>
+            <li>Erste 5 Gespräche führen – Fokus: Problem verstehen, nicht verkaufen</li>
+            <li>Wettbewerber grob analysieren (z. B. Runn, Float, Forecast App)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="week-marker"><div class="week-dot">5–6</div><div class="week-line"></div></div>
+        <div class="week-content">
+          <h4>Woche 5–6 · Validieren & Angebot schärfen</h4>
+          <ul>
+            <li>Restliche Kundengespräche (bis 10–20 insgesamt)</li>
+            <li>Anforderungen & Rollenlogik hinterfragen</li>
+            <li>Erstes Angebot definieren: "Resource & Time Visibility Sprint"</li>
+            <li>Ersten Datenmodell-Prototyp bauen (Excel/Power BI reicht)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="week-marker"><div class="week-dot">7–9</div><div class="week-line"></div></div>
+        <div class="week-content">
+          <h4>Woche 7–9 · Erster PoC-Kunde</h4>
+          <ul>
+            <li>Aktiv 1 Pilotkunden ansprechen und gewinnen (Analysepaket, 2.000–7.500 €)</li>
+            <li>Vertrag/Scope schriftlich fixieren (Fixed Scope, siehe Ergänzungen)</li>
+            <li>Datenschutz/AVV-Thema vorab klären</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="week-block">
+        <div class="week-marker"><div class="week-dot">10–12</div></div>
+        <div class="week-content">
+          <h4>Woche 10–12 · PoC umsetzen</h4>
+          <ul>
+            <li>MaxOps PoC beim ersten Kunden implementieren</li>
+            <li>Resource Conflict Radar als Kernmodul umsetzen</li>
+            <li>Learnings systematisch dokumentieren</li>
+            <li>Standards & wiederverwendbare Module definieren</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <h2>Wichtigster Rat</h2>
+    <div class="quote">Der größte Fehler wäre: ein zu großes Tool zu bauen, bevor du 3–5 reale Kundenprobleme sauber gesehen hast.</div>
+  </section>
+
+  <!-- IDEEN -->
+  <section class="page" id="page-ideen">
+    <span class="badge">Vom KI-Assistenten ergänzt</span>
+    <h1>Ergänzungen & Ideen</h1>
+    <p class="lead">Punkte, die in den beiden Ursprungsdokumenten noch nicht (oder kaum) behandelt wurden, aber vor dem Start wichtig sind.</p>
+
+    <div class="gap-item">
+      <h4>1. Konkrete Wettbewerber kennen</h4>
+      <p>Etablierte Tools im selben Feld: Runn, Float, Resource Guru, Forecast App, Kantata (ex-Mavenlink), Parallax, Retain International, Ganttic, Birdview. Deine Differenzierung ("Integrationsschicht statt Ersatz") solltest du aktiv gegen diese abgrenzen.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>2. Datenschutz & Recht von Tag 1</h4>
+      <p>Zugriff auf Zeiterfassungs- und Personaldaten bedeutet DSGVO, ggf. Auftragsverarbeitungsvertrag (AVV), Betriebsrat-Thema beim Kunden, eigene Berufshaftpflicht. Ohne das wird's beim ersten Pilotkunden schnell zum Show-Stopper.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>3. Tech-Stack-Entscheidung früh treffen</h4>
+      <p>Power BI/Power Automate (schnell, aber Microsoft-gebunden) vs. eigene Web-App. Beeinflusst Preismodell, Skalierbarkeit und wie schnell aus Beratung ein "Produkt" wird.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>4. Preise aktiv validieren statt nur schätzen</h4>
+      <p>Die genannten Preisspannen (2.000–20.000 €) sind plausibel, aber unvalidiert. In den ersten Kundengesprächen aktiv nach Zahlungsbereitschaft fragen.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>5. Nebenerwerbs-Rahmen klären</h4>
+      <p>Gewerbeanmeldung, Nebentätigkeits-Klauseln im aktuellen Arbeitsvertrag prüfen, realistisches Wochenzeitbudget festlegen — Basis, bevor der erste Euro fließt.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>6. Name/Domain/Marke prüfen</h4>
+      <p>"MaxOps" ist ein guter Arbeitsname — aber Markenrecht und Domainverfügbarkeit sollten früh geprüft werden, bevor zu viel Identität daran hängt.</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>7. Referenzkunden-Strategie</h4>
+      <p>Da die Daten sensibel sind, wird es später schwer, Case Studies zu zeigen. Früh ein Konzept für anonymisierte Referenzen entwickeln (z. B. "Ein Maschinenbauunternehmen mit 400 MA...").</p>
+    </div>
+
+    <div class="gap-item">
+      <h4>8. Fixed-Scope-Verträge für Piloten</h4>
+      <p>Datenintegration wird selbst als Risiko genannt. Pilotverträge sollten klar abgegrenzte Leistungspakete mit Fixed Scope haben, sonst verlierst du dich in Individualwünschen.</p>
+    </div>
+
+    <div class="footer-note">
+      Diese Website wurde auf Basis von "01-Businessmodell.docx" und "02-Businessmodell.docx" erstellt — als privates Planungsdokument, Stand: aktueller Denkprozess. Inhalte, Preise und Roadmap sind Annahmen und sollten laufend mit echten Kundengesprächen validiert werden.
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const links = document.querySelectorAll('#sidebar nav a');
+  const pages = document.querySelectorAll('.page');
+
+  links.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.getAttribute('data-page');
+
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + target).classList.add('active');
+
+      // close mobile menu after navigation
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo(0, 0);
+    });
+  });
+</script>
+
+</body>
+</html>
